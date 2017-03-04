@@ -191,6 +191,7 @@ class WordPressPluginBoilerplate{ // Edit Identifier
 		add_shortcode('example_shortcode', array(&$this, 'example_shortcode')); // Shortcode Example
 		
 		// Ajax Call
+		add_action('wp_ajax_ajax_backend_example', array(&$this, 'ajax_backend_general_example')); // Logged in users
 		add_action('wp_ajax_ajax_frontend_example', array(&$this, 'ajax_frontend_general_example')); // Logged in users
 		add_action('wp_ajax_nopriv_ajax_frontend_example', array(&$this, 'ajax_frontend_general_example')); // Guest in users
 		
@@ -240,6 +241,8 @@ class WordPressPluginBoilerplate{ // Edit Identifier
 		wp_register_script( 'wpb-bootstrap-main-script', $this->url . 'external/bootstrap-3.3.7/js/bootstrap.min.js', array('jquery'), '3.3.7' ); // Custom script for the frontend.
 		wp_register_script( 'wpb-admin-script', $this->url . 'assets/js/admin-script.js', array('wpb-bootstrap-main-script') ); // Custom script for the frontend.
 		
+		wp_localize_script( 'wpb-admin-script', 'GB_AJAXURL', array( admin_url( 'admin-ajax.php' ) ) ); // Assigning GB_AJAXURL on the frontend
+		wp_localize_script( 'wpb-admin-script', '_GB_SECURITY', array( wp_create_nonce( "gb-ajax-nonce" ) ) ); // Assigning GB_AJAXURL on the frontend
 	}
 	
 	/**
@@ -350,12 +353,26 @@ class WordPressPluginBoilerplate{ // Edit Identifier
 	/**
 	 * 
 	 * @function ajax_frontend_general_example
-	 * @description Example of ajax call from non logged in and logged in users
+	 * @description Example of ajax call for non logged in and logged in users
 	 * @param void
 	 * @return void
 	 * 
 	 * */
 	public function ajax_frontend_general_example(){
+		check_ajax_referer('gb-ajax-nonce', '_gb_security');
+		echo 'Response Content';
+		wp_die();
+	}
+
+	/**
+	 * 
+	 * @function ajax_backend_general_example
+	 * @description Example of ajax call for logged in users
+	 * @param void
+	 * @return void
+	 * 
+	 * */
+	public function ajax_backend_general_example(){
 		check_ajax_referer('gb-ajax-nonce', '_gb_security');
 		echo 'Response Content';
 		wp_die();
