@@ -184,6 +184,9 @@ class WordPressPluginBoilerplate{ // Edit Identifier
 		// Custom post
 		add_action('init', array(&$this, 'custom_posts'));
 		
+		// Custom Post Taxenomy
+        add_action('init', array(&$this, 'custom_post_taxonomies'));
+		
 		// Adding menu
 		add_action('admin_menu', array(&$this, 'menu'));
 		
@@ -286,12 +289,45 @@ class WordPressPluginBoilerplate{ // Edit Identifier
 				'show_in_nav_menu' => true,
 				'show_in_rest' => true,
 				'menu_icon' => 'dashicons-menu',
-				'taxonomies' => array(),
+				'taxonomies' => array('category',),
 				'has_archive' => true,
 				'featured_image' => true,
 				'supports' => array( 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats'),
 			)
 		);
+	}
+	
+	/**
+	 * 
+	 * @function custom_post_taxonomies
+	 * @description Custom post taxonomies
+	 * 
+	 * */
+	public function custom_post_taxonomies(){
+		
+		$labels = array(
+            'singular_name' => 'Custom Post Taxonomy',
+            //auto::  'search_items' => __('Search Groups', 'textdomain'),
+            //auto::  'all_items' => __('All Group', 'textdomain'),
+            //auto::  'parent_item' => __('Parent Group', 'textdomain'),
+            //auto::  'parent_item_colon' => __('Parent Group:', 'textdomain'),
+            //auto::  'edit_item' => __('Edit Group', 'textdomain'),
+            //auto::  'update_item' => __('Update Group', 'textdomain'),
+            //auto::  'add_new_item' => __('Add New Group', 'textdomain'),
+            //auto::  'new_item_name' => __('New Group Name', 'textdomain'),
+            'menu_name' => 'CP Taxonomy',
+        );
+		
+		$args = array(
+            'hierarchical' => true,
+            'labels' => $labels,
+            'show_ui' => true,
+            'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => array('slug' => 'mtt_group'),
+        );
+		
+		register_taxonomy('cp_taxonomy', array('custom_posts'), $args);
 		
 	}
 	
